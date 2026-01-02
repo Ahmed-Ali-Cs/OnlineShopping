@@ -34,8 +34,9 @@ namespace OnlineShopping.Data
                     Price50 = 649.99,
                     Price100 = 599.99,
                     Author = "TechCorp",
-                    ISBN = "ELEC-001"
-
+                    ISBN = "ELEC-001",
+                    CategoryId = 1,
+                    ImageUrl= ""
 
                 },
                 new Product
@@ -48,8 +49,9 @@ namespace OnlineShopping.Data
                     Price50 = 12.99,
                     Price100 = 9.99,
                     Author = "John Doe",
-                    ISBN = "BOOK-001"
-
+                    ISBN = "BOOK-001",
+                    CategoryId = 2,
+                    ImageUrl = ""
                 },
                 new Product
                 {
@@ -62,6 +64,8 @@ namespace OnlineShopping.Data
                     Price100 = 19.99,
                     Author = "FashionBrand",
                     ISBN = "CLOTH-001",
+                    CategoryId = 3,
+                    ImageUrl = ""
                 }
                 );
         }

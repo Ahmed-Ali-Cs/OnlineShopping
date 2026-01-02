@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineShopping.Data;
 
@@ -10,9 +11,11 @@ using OnlineShopping.Data;
 namespace OnlineShopping.Migrations
 {
     [DbContext(typeof(ApplicationDbcontext))]
-    partial class ApplicationDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20260102183039_AddForiegnKeyToProduct")]
+    partial class AddForiegnKeyToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,9 +88,6 @@ namespace OnlineShopping.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("ListPrice")
                         .HasColumnType("float");
 
@@ -118,7 +118,6 @@ namespace OnlineShopping.Migrations
                             CategoryId = 1,
                             Description = "Latest model smartphone with advanced features",
                             ISBN = "ELEC-001",
-                            ImageUrl = "",
                             ListPrice = 799.99000000000001,
                             Price = 699.99000000000001,
                             Price100 = 599.99000000000001,
@@ -132,7 +131,6 @@ namespace OnlineShopping.Migrations
                             CategoryId = 2,
                             Description = "A thrilling science fiction novel set in a dystopian future",
                             ISBN = "BOOK-001",
-                            ImageUrl = "",
                             ListPrice = 19.989999999999998,
                             Price = 14.99,
                             Price100 = 9.9900000000000002,
@@ -146,7 +144,6 @@ namespace OnlineShopping.Migrations
                             CategoryId = 3,
                             Description = "Comfortable and stylish designer t-shirt",
                             ISBN = "CLOTH-001",
-                            ImageUrl = "",
                             ListPrice = 39.990000000000002,
                             Price = 29.989999999999998,
                             Price100 = 19.989999999999998,

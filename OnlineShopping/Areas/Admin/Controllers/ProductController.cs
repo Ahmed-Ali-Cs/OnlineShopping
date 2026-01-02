@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using OnlineShopping.Data;
 using OnlineShopping.DataAccess.Repositories.IRepository;
 using OnlineShopping.Models;
 using OnlineShopping.Models.Models;
+
 
 namespace OnlineShopping.Areas.Admin.Controllers
 {
@@ -23,20 +25,38 @@ namespace OnlineShopping.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            IEnumerable<SelectListItem> CategoryList = unitOfWork.Category.GetAll().Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            ProductVM productVM = new()
+            {
+                Product = new Product(),
+                CategoryList = CategoryList
+            };
+            return View(productVM);
         }
 
         [HttpPost]
-        public IActionResult Create(Product obj)
+        public IActionResult Create(ProductVM productVM)
         {
             if (ModelState.IsValid)
             {
-                unitOfWork.Product.Add(obj);
+                unitOfWork.Product.Add(productVM.Product);
                 unitOfWork.Save();
-                TempData["success"]="Product created successfully";
+                TempData["success"] = "Product created successfully";
                 return RedirectToAction(nameof(Index));
             }
-            return View();
+            else
+            {
+                productVM.CategoryList= unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                });
+                return View(productVM);
+            }
         }
         public IActionResult Edit(int? id)
         {
@@ -44,7 +64,7 @@ namespace OnlineShopping.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Product? ProductFromdB = unitOfWork.Product.GetFirstOrDefault(c=>c.Id==id);
+            Product? ProductFromdB = unitOfWork.Product.GetFirstOrDefault(c => c.Id == id);
             if (ProductFromdB == null)
             {
                 return NotFound();
@@ -59,7 +79,7 @@ namespace OnlineShopping.Areas.Admin.Controllers
             {
                 unitOfWork.Product.Update(obj);
                 unitOfWork.Save();
-                TempData["success"]="Product updated successfully";
+                TempData["success"] = "Product updated successfully";
                 return RedirectToAction(nameof(Index));
             }
             return View();
@@ -72,7 +92,7 @@ namespace OnlineShopping.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            Product? ProductFromdB = unitOfWork.Product.GetFirstOrDefault(c=>c.Id==id);
+            Product? ProductFromdB = unitOfWork.Product.GetFirstOrDefault(c => c.Id == id);
             if (ProductFromdB == null)
             {
                 return NotFound();
@@ -90,7 +110,7 @@ namespace OnlineShopping.Areas.Admin.Controllers
             }
             unitOfWork.Product.Remove(obj);
             unitOfWork.Save();
-            TempData["success"]="Product deleted successfully";
+            TempData["success"] = "Product deleted successfully";
             return RedirectToAction(nameof(Index));
 
         }

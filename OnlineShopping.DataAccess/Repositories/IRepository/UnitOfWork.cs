@@ -12,10 +12,14 @@ namespace OnlineShopping.DataAccess.Repositories.IRepository
         private readonly ApplicationDbcontext db;
 
         public ICategoryRepository Category { get; private set; }
+
+        public IProductRepository Product { get; private set; }
+
         public UnitOfWork(ApplicationDbcontext db)
         {
             this.db = db;
             Category = new CategoryRepository(db);
+            Product = new ProductRepository(db);
         }
         public void Save()
         {

@@ -9,8 +9,8 @@ namespace OnlineShopping.DataAccess.Repositories.IRepository
 {
     public interface IRepository<T>
     {
-        IEnumerable<T> GetAll();
-        T GetFirstOrDefault(Expression<Func<T, bool>> filter);
+        IEnumerable<T> GetAll(string? Includeproperty=null);
+        T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? Includeproperty = null);
         void Add(T entity);
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entity);

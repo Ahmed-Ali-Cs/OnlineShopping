@@ -12,10 +12,12 @@ namespace OnlineShopping.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
+        private readonly IWebHostEnvironment hostEnvironment;
 
-        public ProductController(IUnitOfWork unitOfWork)
+        public ProductController(IUnitOfWork unitOfWork,IWebHostEnvironment hostEnvironment)
         {
             this.unitOfWork = unitOfWork;
+            this.hostEnvironment = hostEnvironment;
         }
         public IActionResult Index()
         {
@@ -23,29 +25,67 @@ namespace OnlineShopping.Areas.Admin.Controllers
             return View(ProductList);
         }
 
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
-            IEnumerable<SelectListItem> CategoryList = unitOfWork.Category.GetAll().Select(i => new SelectListItem
-            {
-                Text = i.Name,
-                Value = i.Id.ToString()
-            });
+            
             ProductVM productVM = new()
             {
                 Product = new Product(),
-                CategoryList = CategoryList
+                CategoryList = unitOfWork.Category.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Name,
+                    Value = i.Id.ToString()
+                })
             };
-            return View(productVM);
+            if (id==0 || id==null)
+            {
+                // Create product
+                return View(productVM);
+            }
+            else
+            {
+                productVM.Product = unitOfWork.Product.GetFirstOrDefault(c => c.Id == id);
+                return View(productVM);
+            }
         }
 
         [HttpPost]
-        public IActionResult Create(ProductVM productVM)
+        public IActionResult Upsert(ProductVM productVM,IFormFile? file)
         {
             if (ModelState.IsValid)
             {
-                unitOfWork.Product.Add(productVM.Product);
+                string wwwrootPath = hostEnvironment.WebRootPath;
+                if (file != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    var uploads = Path.Combine(wwwrootPath, @"Images\Product");
+                    if (!string.IsNullOrEmpty(productVM.Product.ImageUrl))
+                    {
+                        var oldImagePath = Path.Combine(wwwrootPath, productVM.Product.ImageUrl.TrimStart('\\'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+                    using (var fileStreams = new FileStream(Path.Combine(uploads, fileName), FileMode.Create))
+                    {
+                        file.CopyTo(fileStreams);
+                    }
+                    productVM.Product.ImageUrl = @"\Images\Product\" + fileName;
+                }
+                if (productVM.Product.Id != 0)
+                {
+                    unitOfWork.Product.Update(productVM.Product);
+                    TempData["success"] = "Product Update successfully";
+                }
+                else
+                {
+                    unitOfWork.Product.Add(productVM.Product);
+                    TempData["success"] = "Product created successfully";
+                }
+                    
                 unitOfWork.Save();
-                TempData["success"] = "Product created successfully";
+                
                 return RedirectToAction(nameof(Index));
             }
             else
@@ -58,32 +98,7 @@ namespace OnlineShopping.Areas.Admin.Controllers
                 return View(productVM);
             }
         }
-        public IActionResult Edit(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-            Product? ProductFromdB = unitOfWork.Product.GetFirstOrDefault(c => c.Id == id);
-            if (ProductFromdB == null)
-            {
-                return NotFound();
-            }
-            return View(ProductFromdB);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Product obj)
-        {
-            if (ModelState.IsValid)
-            {
-                unitOfWork.Product.Update(obj);
-                unitOfWork.Save();
-                TempData["success"] = "Product updated successfully";
-                return RedirectToAction(nameof(Index));
-            }
-            return View();
-        }
+    
 
 
         public IActionResult Delete(int? id)

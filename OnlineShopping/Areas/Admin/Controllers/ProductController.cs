@@ -141,7 +141,7 @@ namespace OnlineShopping.Areas.Admin.Controllers
         [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            var obj = unitOfWork.Product.GetFirstOrDefault(c => c.Id == id);
+            var obj = unitOfWork.Product.GetFirstOrDefault(c => c.Id == id);    
             if (obj == null)
             {
                 return Json(new { success = false, message = "Error while deleting" });
@@ -156,7 +156,7 @@ namespace OnlineShopping.Areas.Admin.Controllers
             }
             unitOfWork.Product.Remove(obj);
             unitOfWork.Save();
-            return Json(new { success = true, message = "Delete Successful" });
+            return Json(new { success = true, message = "Product Delete Successful" });
         }
         #endregion
 

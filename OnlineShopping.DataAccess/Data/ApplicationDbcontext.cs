@@ -1,18 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OnlineShopping.Models;
 using OnlineShopping.Models.Models;
 
 
 namespace OnlineShopping.Data
 {
-    public class ApplicationDbcontext : DbContext
+    public class ApplicationDbcontext : IdentityDbContext<IdentityUser>
     {
         public ApplicationDbcontext(DbContextOptions<ApplicationDbcontext> options) : base(options)
         {
         }
 
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Product> Products { get; set; }
+        public DbSet<Product> Products { get; set;}
 
         override protected void OnModelCreating(ModelBuilder modelBuilder)
         {

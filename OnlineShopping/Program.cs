@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OnlineShopping.Data;
 using OnlineShopping.DataAccess.Repositories.IRepository;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Services.AddDbContext<ApplicationDbcontext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("OnlineShoppingDb"));
 });
+
+builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbcontext>();
+builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -27,10 +31,12 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
 
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")

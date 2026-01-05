@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using OnlineShopping.Data;
 using OnlineShopping.DataAccess.Repositories.IRepository;
 using Microsoft.AspNetCore.Identity;
+using OnlineShopping.Utilities;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +16,11 @@ builder.Services.AddDbContext<ApplicationDbcontext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("OnlineShoppingDb"));
 });
 
-builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbcontext>();
+builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbcontext>();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 

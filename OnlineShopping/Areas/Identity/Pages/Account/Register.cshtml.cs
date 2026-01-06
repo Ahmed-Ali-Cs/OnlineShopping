@@ -15,7 +15,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using OnlineShopping.Models.Models;
@@ -102,6 +104,12 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+
+            public string Role { get; set; }
+
+            [ValidateNever]
+            public IEnumerable<SelectListItem> RoleList { get; set; }
         }
 
 
@@ -114,6 +122,15 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
                 _roleManager.CreateAsync(new IdentityRole(SD.ManagerRole)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(SD.CompanyRole)).GetAwaiter().GetResult();
             }
+            Input = new InputModel()
+            {
+                RoleList = _roleManager.Roles.Select(r => r.Name).Select(n => new SelectListItem
+                {
+                    Text = n,
+                    Value = n
+                })
+            };
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -125,6 +142,7 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -133,8 +151,17 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    TempData["success"] = "Register successful";
+                    if (!string.IsNullOrEmpty(Input.Role))
+                    {
+                        _userManager.AddToRoleAsync(user, Input.Role).GetAwaiter().GetResult();
+                    }
+                    else
+                    {
+                         _userManager.AddToRoleAsync(user, SD.CustomerRole).GetAwaiter().GetResult();
+                    }
 
-                    var userId = await _userManager.GetUserIdAsync(user);
+                        var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(

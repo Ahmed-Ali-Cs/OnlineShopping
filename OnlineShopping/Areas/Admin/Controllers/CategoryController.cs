@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using OnlineShopping.Data;
 using OnlineShopping.DataAccess.Repositories.IRepository;
 using OnlineShopping.Models;
@@ -6,6 +8,7 @@ using OnlineShopping.Models;
 namespace OnlineShopping.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles="Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork unitOfWork;

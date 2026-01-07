@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using OnlineShopping.DataAccess.Repositories.IRepository;
 using OnlineShopping.Models.Models;
 using OnlineShopping.Utilities;
 
@@ -33,7 +34,9 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
+
 
         public RegisterModel(
             RoleManager<IdentityRole> roleManager,
@@ -41,6 +44,7 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
+            IUnitOfWork unitOfWork,
             IEmailSender emailSender)
         {
             _roleManager = roleManager;
@@ -49,6 +53,7 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
+            _unitOfWork = unitOfWork;
             _emailSender = emailSender;
         }
 
@@ -116,6 +121,11 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
             public string City { get; set; }
             public string State { get; set; }
             public string Country { get; set; }
+
+
+            public int CompanyId { get; set; }
+            [ValidateNever]
+            public IEnumerable<SelectListItem> CompanyList { get; set; }
         }
 
 
@@ -134,6 +144,11 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
                 {
                     Text = n,
                     Value = n
+                }),
+                CompanyList = _unitOfWork.Company.GetAll().Select(n => new SelectListItem
+                {
+                    Text = n.Name,
+                    Value = n.Id.ToString()
                 })
             };
 
@@ -157,6 +172,10 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
                 user.City = Input.City;
                 user.State = Input.State;
                 user.Country = Input.Country;
+                if (Input.Role==SD.CompanyRole)
+                {
+                    user.CompanyId = Input.CompanyId;
+                }
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

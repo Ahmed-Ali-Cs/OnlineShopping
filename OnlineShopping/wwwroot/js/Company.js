@@ -7,8 +7,9 @@
             { "data": "name", "width": "15%" },
             { "data": "address", "width": "15%" },
             { "data": "city", "width": "15%" },
-            { "data": "region", "width": "15%" },
+            { "data": "region", "width": "10%" },
             { "data": "postalCode", "width": "10%" },
+            { "data": "phoneNumber", "width": "10%" },
             {
                 "data": "id",
                 "render": function (data) {
@@ -22,7 +23,7 @@
                                     </a>
                                 </div>
                             `;
-                }, "width": "30%"
+                }, "width": "25%"
             }
         ]
     });

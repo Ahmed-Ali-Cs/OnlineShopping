@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShopping.DataAccess.Repositories.IRepository;
 using OnlineShopping.Models;
@@ -25,8 +26,35 @@ namespace OnlineShopping.Areas.Customer.Controllers
         }
         public IActionResult Details(int productId)
         {
-            Product product = unitOfWork.Product.GetFirstOrDefault(p => p.Id == productId, Includeproperty:"Category");
-            return View(product);
+            ShoppingCart cart = new()
+            {
+                Product = unitOfWork.Product.GetFirstOrDefault(p => p.Id == productId, Includeproperty: "Category"),
+                Count=1,
+                ProductId=productId
+            };
+            
+            return View(cart);
+        }
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            var claimsIdentity = (System.Security.Claims.ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+            shoppingCart.ApplicationUserId = userId;
+            ShoppingCart cartFromDb = unitOfWork.ShoppingCart.GetFirstOrDefault(
+                u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
+            if (cartFromDb == null)
+            {
+                unitOfWork.ShoppingCart.Add(shoppingCart);
+            }
+            else
+            {
+                cartFromDb.Count += shoppingCart.Count;
+                unitOfWork.ShoppingCart.Update(cartFromDb);
+            }
+            unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()

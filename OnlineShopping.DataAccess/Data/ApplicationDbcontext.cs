@@ -17,6 +17,7 @@ namespace OnlineShopping.Data
         public DbSet<Product> Products { get; set;}
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Company> Companies { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 
         override protected void OnModelCreating(ModelBuilder modelBuilder)
         {

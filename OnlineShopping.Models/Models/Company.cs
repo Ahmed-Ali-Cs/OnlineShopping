@@ -16,6 +16,7 @@ namespace OnlineShopping.Models.Models
         public string? City { get; set; }
         public string? Region { get; set; }
         public string? PostalCode { get; set; }
-        
+        public int PhoneNumber { get; set; }
+
     }
 }

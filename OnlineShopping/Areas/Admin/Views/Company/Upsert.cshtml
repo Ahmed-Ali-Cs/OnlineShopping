@@ -1,0 +1,67 @@
+﻿@model Company
+
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row">
+
+        <div class="border p-3 mt-4">
+            <div class="row pb-2">
+                <h2 class="text-primary">@(Model.Id == 0 ? "Create" : "Update") Company</h2>
+                <hr />
+            </div>
+            <div asp-validation-summary="All"></div>
+            <div class="row mb-3 p-0 ">
+                <label asp-for="Name" class="form-label p-1"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="row mb-3 p-0 ">
+                <label asp-for="Address" class="form-label p-1"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="row mb-3 p-0 ">
+                <label asp-for="City" class="form-label p-1"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="row mb-3 p-0 ">
+                <label asp-for="Region" class="form-label p-1"></label>
+                <input asp-for="Region" class="form-control" />
+                <span asp-validation-for="Region" class="text-danger"></span>
+            </div>
+            <div class="row mb-3 p-0 ">
+                <label asp-for="PostalCode" class="form-label p-1"></label>
+                <input asp-for="PostalCode" class="form-control" />
+                <span asp-validation-for="PostalCode" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-6 col-md-3">
+                    @if (Model.Id == 0)
+                    {
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    }
+                </div>
+                <div class="col-6 col-md-3">
+                    <a asp-action="Index" class="btn btn-secondary border">Back to List</a>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+</form>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial.cshtml" />
+    }
+}

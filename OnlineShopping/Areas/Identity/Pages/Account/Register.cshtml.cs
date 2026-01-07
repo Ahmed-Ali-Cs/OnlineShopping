@@ -110,6 +110,12 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
 
             [ValidateNever]
             public IEnumerable<SelectListItem> RoleList { get; set; }
+            [Required]
+            public string Name { get; set; }
+            public string Address { get; set; }
+            public string City { get; set; }
+            public string State { get; set; }
+            public string Country { get; set; }
         }
 
 
@@ -146,6 +152,11 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                user.Name = Input.Name;
+                user.Address = Input.Address;
+                user.City = Input.City;
+                user.State = Input.State;
+                user.Country = Input.Country;
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

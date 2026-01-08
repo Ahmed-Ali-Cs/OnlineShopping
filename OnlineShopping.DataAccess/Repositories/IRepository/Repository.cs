@@ -24,20 +24,25 @@ namespace OnlineShopping.DataAccess.Repositories.IRepository
             dbSet.Add(entity);
         }
 
-        public IEnumerable<T> GetAll(string? Includeproperty = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? Includeproperty = null)
         {
             IQueryable<T> query = dbSet;
-            if (Includeproperty != null)
+
+            if (!string.IsNullOrEmpty(Includeproperty))
             {
                 foreach (var includeprop in Includeproperty.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     query = query.Include(includeprop);
                 }
             }
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            } 
             return query.ToList();
         }
 
-        
+
 
         public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? Includeproperty = null)
         {

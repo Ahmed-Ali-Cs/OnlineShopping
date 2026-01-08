@@ -41,6 +41,7 @@ namespace OnlineShopping.Areas.Customer.Controllers
         {
             var claimsIdentity = (System.Security.Claims.ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
             shoppingCart.ApplicationUserId = userId;
             ShoppingCart cartFromDb = unitOfWork.ShoppingCart.GetFirstOrDefault(
                 u => u.ApplicationUserId == userId && u.ProductId == shoppingCart.ProductId);
@@ -54,6 +55,7 @@ namespace OnlineShopping.Areas.Customer.Controllers
                 unitOfWork.ShoppingCart.Update(cartFromDb);
             }
             unitOfWork.Save();
+            TempData["success"] = "Cart Udate Successfully";
             return RedirectToAction(nameof(Index));
         }
 

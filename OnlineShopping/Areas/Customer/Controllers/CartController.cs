@@ -25,7 +25,67 @@ namespace OnlineShopping.Areas.Customer.Controllers
             {
                 ShoppingCartlist = unitOfWork.ShoppingCart.GetAll(s => s.ApplicationUserId == userId, Includeproperty: "Product")
             };
-            return View();
+
+            foreach (var cart in ShoppingCartVm.ShoppingCartlist)
+            {
+                cart.Price = getproductprice(cart);
+                ShoppingCartVm.OrderTotal += (cart.Price * cart.Count);
+            }
+            return View(ShoppingCartVm);
+        }
+        public IActionResult Plus(int cartId)
+        {
+            var cart = unitOfWork.ShoppingCart.GetFirstOrDefault(s => s.Id == cartId);
+            cart.Count += 1;
+            unitOfWork.ShoppingCart.Update(cart);
+            unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Miuns(int cartId)
+        {
+            var cart = unitOfWork.ShoppingCart.GetFirstOrDefault(s => s.Id == cartId);
+            if (cart.Count <= 1)
+            {
+                unitOfWork.ShoppingCart.Remove(cart);
+            }
+            else
+            {
+                cart.Count -= 1;
+                //cart.Price = getproductprice(cart);
+                unitOfWork.ShoppingCart.Update(cart);
+            }
+            unitOfWork.Save();
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Remove(int cartId)
+        {
+            var cart = unitOfWork.ShoppingCart.GetFirstOrDefault(s => s.Id == cartId);
+            unitOfWork.ShoppingCart.Remove(cart);
+            unitOfWork.Save();
+            return RedirectToAction("Index");
+        }
+
+       
+
+        private double getproductprice(ShoppingCart shopping)
+        {
+            if (shopping.Count <= 50)
+            {
+                return shopping.Product.Price;
+            }
+            else
+            {
+                if (shopping.Count <= 100)
+                {
+                    return shopping.Product.Price50;
+                }
+                else
+                {
+                    return shopping.Product.Price100;
+                }
+            }
         }
     }
 }

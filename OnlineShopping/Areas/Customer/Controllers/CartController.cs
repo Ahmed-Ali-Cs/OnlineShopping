@@ -33,6 +33,23 @@ namespace OnlineShopping.Areas.Customer.Controllers
             }
             return View(ShoppingCartVm);
         }
+
+        public IActionResult Summary()
+        {
+            var claimsidentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsidentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ShoppingCartVm = new()
+            {
+                ShoppingCartlist = unitOfWork.ShoppingCart.GetAll(s => s.ApplicationUserId == userId, Includeproperty: "Product")
+            };
+            foreach (var cart in ShoppingCartVm.ShoppingCartlist)
+            {
+                cart.Price = getproductprice(cart);
+                ShoppingCartVm.OrderTotal += (cart.Price * cart.Count);
+            }
+            return View(ShoppingCartVm);
+        }
+
         public IActionResult Plus(int cartId)
         {
             var cart = unitOfWork.ShoppingCart.GetFirstOrDefault(s => s.Id == cartId);

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineShopping.DataAccess.Repositories.IRepository;
 using OnlineShopping.Models.Models;
+using OnlineShopping.Utilities;
 using System.Security.Claims;
 
 namespace OnlineShopping.Areas.Customer.Controllers
@@ -64,10 +65,6 @@ namespace OnlineShopping.Areas.Customer.Controllers
                 ShoppingCartVm.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
 
-            if (ShoppingCartVm.OrderHeader.ApplicationUser.CompanyId==0)
-            {
-
-            }
             return View(ShoppingCartVm);
         }
         [HttpPost]
@@ -80,13 +77,28 @@ namespace OnlineShopping.Areas.Customer.Controllers
 
             ShoppingCartVm.OrderHeader.ApplicationUser = unitOfWork.ApplicationUser.GetFirstOrDefault(s => s.Id == userId);
 
+            ShoppingCartVm.OrderHeader.OrderDate = DateTime.Now;
+            ShoppingCartVm.OrderHeader.ApplicationUserId = userId;
 
             foreach (var cart in ShoppingCartVm.ShoppingCartlist)
             {
                 cart.Price = getproductprice(cart);
                 ShoppingCartVm.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
-            return View(ShoppingCartVm);
+
+            if (ShoppingCartVm.OrderHeader.ApplicationUser.CompanyId == 0)
+            {
+                //regular Customer needed to capture payment
+                ShoppingCartVm.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+                ShoppingCartVm.OrderHeader.OrderStatus = SD.StatusPending;
+            }
+            else
+            {
+                //company user
+                ShoppingCartVm.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPayment;
+                ShoppingCartVm.OrderHeader.OrderStatus = SD.StatusApproved;
+            }
+                return View(ShoppingCartVm);
         }
 
         public IActionResult Plus(int cartId)

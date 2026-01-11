@@ -12,5 +12,18 @@ namespace OnlineShopping.Utilities
         public const string CustomerRole = "Customer";
         public const string ManagerRole = "Manager";
         public const string CompanyRole = "Company";
+
+
+        public const string StatusPending = "Pending";
+        public const string StatusApproved = "Approved";
+        public const string StatusInProcess = "Processing";
+        public const string StatusShipped = "Shipped";
+        public const string StatusCancelled = "Cancelled";
+        public const string PaymentStatusRefunded = "Refunded";
+
+        public const string PaymentStatusPending = "Pending";
+        public const string PaymentStatusApproved = "Approved";
+        public const string PaymentStatusDelayedPayment = "ApprovedForDelayed Payment";
+        public const string PaymentStatusRejected = "Rejected";
     }
 }

@@ -11,6 +11,7 @@ namespace OnlineShopping.Areas.Customer.Controllers
     public class CartController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
+        [BindProperty]
         public ShoppingCartVm ShoppingCartVm { get; set; }
         public CartController(IUnitOfWork unitOfWork)
         {
@@ -55,6 +56,29 @@ namespace OnlineShopping.Areas.Customer.Controllers
             ShoppingCartVm.OrderHeader.City = ShoppingCartVm.OrderHeader.ApplicationUser.City;
             ShoppingCartVm.OrderHeader.State = ShoppingCartVm.OrderHeader.ApplicationUser.State;
             ShoppingCartVm.OrderHeader.PostalCode = ShoppingCartVm.OrderHeader.ApplicationUser.PostalCode;
+
+
+            foreach (var cart in ShoppingCartVm.ShoppingCartlist)
+            {
+                cart.Price = getproductprice(cart);
+                ShoppingCartVm.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+            }
+
+            if (ShoppingCartVm.OrderHeader.ApplicationUser.CompanyId==0)
+            {
+
+            }
+            return View(ShoppingCartVm);
+        }
+        [HttpPost]
+        [ActionName("Summary")]
+        public IActionResult SummaryPost()
+        {
+            var claimsidentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsidentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ShoppingCartVm.ShoppingCartlist = unitOfWork.ShoppingCart.GetAll(s => s.ApplicationUserId == userId, Includeproperty: "Product");
+
+            ShoppingCartVm.OrderHeader.ApplicationUser = unitOfWork.ApplicationUser.GetFirstOrDefault(s => s.Id == userId);
 
 
             foreach (var cart in ShoppingCartVm.ShoppingCartlist)

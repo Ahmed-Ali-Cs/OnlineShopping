@@ -18,6 +18,7 @@ namespace OnlineShopping.DataAccess.Repositories.IRepository
         public IShoppingCartRepository ShoppingCart { get; private set; }
         public IOrderDetailRepository OrderDetail { get; private set; }
         public IOrderHeaderRepository OrderHeader { get; private set; }
+        public IApplicationUserRepository ApplicationUser { get; private set; }
 
         public UnitOfWork(ApplicationDbcontext db)
         {
@@ -28,6 +29,7 @@ namespace OnlineShopping.DataAccess.Repositories.IRepository
             ShoppingCart = new ShoppingCartRepository(db);
             OrderHeader = new OrderHeaderRepository(db);
             OrderDetail = new OrderDetailRepository(db);
+            ApplicationUser = new ApplicationUserRepository(db);
         }
         public void Save()
         {

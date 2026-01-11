@@ -9,6 +9,6 @@ namespace OnlineShopping.Models.Models
     public class ShoppingCartVm
     {
         public IEnumerable<ShoppingCart> ShoppingCartlist { get; set; }
-        public double OrderTotal { get; set; }
+        public OrderHeader OrderHeader { get; set; }
     }
 }

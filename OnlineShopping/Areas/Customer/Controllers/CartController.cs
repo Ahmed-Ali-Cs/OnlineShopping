@@ -98,7 +98,22 @@ namespace OnlineShopping.Areas.Customer.Controllers
                 ShoppingCartVm.OrderHeader.PaymentStatus = SD.PaymentStatusDelayedPayment;
                 ShoppingCartVm.OrderHeader.OrderStatus = SD.StatusApproved;
             }
-                return View(ShoppingCartVm);
+            unitOfWork.OrderHeader.Add(ShoppingCartVm.OrderHeader);
+            unitOfWork.Save();
+
+            foreach (var cart in ShoppingCartVm.ShoppingCartlist)
+            {
+                OrderDetail orderDetail = new()
+                {
+                    ProductId=cart.ProductId,
+                    OrderHeaderId=ShoppingCartVm.OrderHeader.Id,
+                    Price=cart.Price,
+                    Count=cart.Count
+                };
+                unitOfWork.OrderDetail.Add(orderDetail);
+                unitOfWork.Save();
+            }
+            return View(ShoppingCartVm);
         }
 
         public IActionResult Plus(int cartId)

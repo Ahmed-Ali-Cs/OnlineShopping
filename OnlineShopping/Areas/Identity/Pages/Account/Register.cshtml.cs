@@ -123,7 +123,7 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
             public string Country { get; set; }
 
 
-            public int CompanyId { get; set; }
+            public int? CompanyId { get; set; }
             [ValidateNever]
             public IEnumerable<SelectListItem> CompanyList { get; set; }
         }
@@ -172,11 +172,12 @@ namespace OnlineShopping.Areas.Identity.Pages.Account
                 user.City = Input.City;
                 user.State = Input.State;
                 user.Country = Input.Country;
+
                 if (Input.Role==SD.CompanyRole)
                 {
                     user.CompanyId = Input.CompanyId;
                 }
-                var result = await _userManager.CreateAsync(user, Input.Password);
+                IdentityResult result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {

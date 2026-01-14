@@ -75,7 +75,7 @@ namespace OnlineShopping.Areas.Customer.Controllers
             var userId = claimsidentity.FindFirst(ClaimTypes.NameIdentifier).Value;
             ShoppingCartVm.ShoppingCartlist = unitOfWork.ShoppingCart.GetAll(s => s.ApplicationUserId == userId, Includeproperty: "Product");
 
-            ShoppingCartVm.OrderHeader.ApplicationUser = unitOfWork.ApplicationUser.GetFirstOrDefault(s => s.Id == userId);
+            ApplicationUser ApplicationUser = unitOfWork.ApplicationUser.GetFirstOrDefault(s => s.Id == userId);
 
             ShoppingCartVm.OrderHeader.OrderDate = DateTime.Now;
             ShoppingCartVm.OrderHeader.ApplicationUserId = userId;
@@ -86,7 +86,7 @@ namespace OnlineShopping.Areas.Customer.Controllers
                 ShoppingCartVm.OrderHeader.OrderTotal += (cart.Price * cart.Count);
             }
 
-            if (ShoppingCartVm.OrderHeader.ApplicationUser.CompanyId == 0)
+            if (ApplicationUser.CompanyId == 0)
             {
                 //regular Customer needed to capture payment
                 ShoppingCartVm.OrderHeader.PaymentStatus = SD.PaymentStatusPending;

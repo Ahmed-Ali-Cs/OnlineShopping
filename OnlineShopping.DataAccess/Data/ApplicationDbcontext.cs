@@ -75,6 +75,26 @@ namespace OnlineShopping.Data
                     ImageUrl = ""
                 }
                 );
+
+            modelBuilder.Entity<Company>().HasData(new Company
+            {
+                Id = 2,
+                Name = "TechCorp",
+                Address = "123 Tech Street",
+                City = "Techville",
+                PostalCode = "90001",
+                PhoneNumber = 123-456-7890
+            },
+            new Company
+            {
+                Id = 3,
+                Name = "BookWorld",
+                Address = "456 Book Avenue",
+                City = "Readertown",
+                PostalCode = "90002",
+                PhoneNumber = 234-567-8901
+            }
+            );
         }
     }
 }
